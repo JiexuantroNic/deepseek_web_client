@@ -1,0 +1,245 @@
+/* 基础样式 */
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.5;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 头部样式 */
+header {
+    background-color: #6200ee;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.profile {
+    margin-top: 12px;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+.profile h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 1em;
+}
+
+.profile ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.profile li {
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}
+
+/* 聊天容器 */
+.chat-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+#chat-history {
+    height: 500px;
+    padding: 15px;
+    overflow-y: auto;
+}
+
+/* 消息样式 */
+.message {
+    margin-bottom: 10px;
+    padding: 10px 15px;
+    border-radius: 18px;
+    max-width: 80%;
+    line-height: 1.5;
+}
+
+.message.user {
+    background-color: #e3f2fd;
+    margin-left: auto;
+    border-bottom-right-radius: 5px;
+}
+
+.message.assistant {
+    background-color: #f1f1f1;
+    margin-right: auto;
+    border-bottom-left-radius: 5px;
+}
+
+/* 输入区域 */
+.input-area {
+    display: flex;
+    padding: 15px;
+    border-top: 1px solid #eee;
+}
+
+#user-input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: none;
+    height: 60px;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+#send-btn {
+    margin-left: 10px;
+    padding: 0 20px;
+    background-color: #6200ee;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#send-btn:hover {
+    background-color: #3700b3;
+}
+
+/* Markdown内容样式 */
+.markdown-content {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    line-height: 1.6;
+}
+
+.markdown-content p {
+    margin: 0.5em 0;
+}
+
+.markdown-content pre {
+    background-color: #f8f8f8;
+    padding: 1em;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 0.8em 0;
+}
+
+.markdown-content code {
+    font-family: 'Courier New', monospace;
+    background-color: #f8f8f8;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+}
+
+.markdown-content pre code {
+    padding: 0;
+    background-color: transparent;
+}
+
+.markdown-content blockquote {
+    border-left: 3px solid #ddd;
+    padding-left: 1em;
+    color: #777;
+    margin-left: 0;
+    padding-right: 0;
+    margin-top: 0.8em;
+    margin-bottom: 0.8em;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+    padding-left: 1.5em;
+    margin: 0.8em 0;
+}
+
+.markdown-content li {
+    margin-bottom: 0.4em;
+}
+
+.markdown-content table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+}
+
+.markdown-content table,
+.markdown-content th,
+.markdown-content td {
+    border: 1px solid #ddd;
+}
+
+.markdown-content th,
+.markdown-content td {
+    padding: 0.5em;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3 {
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+}
+
+/* 响应式设计 */
+@media screen and (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    #chat-history {
+        height: 400px;
+        padding: 12px;
+    }
+
+    .message {
+        max-width: 85%;
+        padding: 8px 12px;
+    }
+
+    .input-area {
+        padding: 12px;
+    }
+
+    #user-input {
+        height: 55px;
+        padding: 8px 12px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    header {
+        padding: 12px 15px;
+    }
+
+    .profile {
+        padding: 8px 12px;
+    }
+
+    .message {
+        max-width: 90%;
+        padding: 8px 10px;
+    }
+
+    .markdown-content pre {
+        padding: 0.8em;
+    }
+
+    .markdown-content blockquote {
+        padding-left: 0.8em;
+    }
+}

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepSeek 聊天客户端</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- 引入Markdown渲染库 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- 引入代码高亮 -->
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/lib/core.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/github.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>DeepSeek 聊天</h1>
+            <div class="profile">
+                <h3>用户资料</h3>
+                <ul>
+                    {% for key, value in profile.items() %}
+                        <li><strong>{{ key }}:</strong> {{ value }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </header>
+
+        <div class="chat-container">
+            <div id="chat-history"></div>
+
+            <div class="input-area">
+                <textarea id="user-input" placeholder="输入你的消息..."></textarea>
+                <button id="send-btn">发送</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 配置marked
+        marked.setOptions({
+            breaks: true,  // 保留换行
+            highlight: function(code, lang) {
+                const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+                return hljs.highlight(code, { language }).value;
+            }
+        });
+
+        const chatHistory = document.getElementById('chat-history');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+
+        function addMessage(role, content) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+
+            // 用户消息不渲染Markdown，AI消息渲染
+            if (role === 'assistant') {
+                messageDiv.innerHTML = `<strong>AI:</strong> <div class="markdown-content">${marked.parse(content)}</div>`;
+            } else {
+                messageDiv.innerHTML = `<strong>你:</strong> ${content.replace(/\n/g, '<br>')}`;
+            }
+
+            chatHistory.appendChild(messageDiv);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            // 高亮代码块
+            if (role === 'assistant') {
+                document.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
+            }
+        }
+
+        function sendMessage() {
+            const prompt = userInput.value.trim();
+            if (!prompt) return;
+
+            addMessage('user', prompt);
+            userInput.value = '';
+
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ prompt: prompt })
+            })
+            .then(response => {
+                const reader = response.body.getReader();
+                let aiResponse = '';
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message assistant';
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'markdown-content';
+                messageDiv.innerHTML = '<strong>AI:</strong> ';
+                messageDiv.appendChild(contentDiv);
+                chatHistory.appendChild(messageDiv);
+
+                function readChunk() {
+                    return reader.read().then(({value, done}) => {
+                        if (done) return;
+
+                        const text = new TextDecoder().decode(value);
+                        const lines = text.split('\n');
+
+                        for (const line of lines) {
+                            if (line.startsWith('data: ')) {
+                                const data = line.substring(6);
+                                if (data) {
+                                    try {
+                                        const jsonData = JSON.parse(data);
+                                        if (jsonData.content) {
+                                            aiResponse += jsonData.content;
+                                            // 实时渲染Markdown并保留换行
+                                            contentDiv.innerHTML = marked.parse(aiResponse);
+                                            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+                                            // 高亮新添加的代码块
+                                            document.querySelectorAll('pre code').forEach((block) => {
+                                                hljs.highlightElement(block);
+                                            });
+                                        }
+                                    } catch (e) {
+                                        console.error('解析错误:', e);
+                                    }
+                                }
+                            }
+                        }
+
+                        return readChunk();
+                    });
+                }
+
+                return readChunk();
+            })
+            .catch(error => {
+                console.error('请求错误:', error);
+                addMessage('assistant', '抱歉，发生错误: ' + error.message);
+            });
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
