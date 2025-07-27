@@ -2,10 +2,10 @@
     "my_profile": {
         "name": "张三",
         "age": 25,
-        "profession": "运维爱好者，服务器爱好者",
+        "profession": "服务器运维，服务器爱好者",
         "interests": ["机器学习", "舞萌dx","绝区零"],
         "memory": [
-            ""
+             "25年曾经去美国出差"
         ]
     }
 }
